@@ -1,29 +1,42 @@
 
 
+var octogonPoints = "-25,-45   25,-45  50,-20  50,30 25,55 -25,55  -50,30  -50, -20"; 
+var octogonTransform = "scale(.3)";
+var hexagonPoints = "0,-125  108,-63.5 108,63.5 -10,125 -108,63.6 -108,-63.5" ;
+var hexagonTransform = "scale(.10)"
+var trianglePoints= octogonPoints;
+var triangleTransform = 'scale(.1)';
+
+
 var treeData = [
-  {
-    "name": "Top Level",
-    "parent": "null",
-    "children": [
-      {
-        "name": "Level 2: A",
-        "parent": "Top Level",
+        {
+        "name": "All Pods",
+        "parent": "null",
+        "level":"1",
         "children": [
           {
-            "name": "Son of A",
-            "parent": "Level 2: A"
+            "name": "MnDev",
+            "parent": "All Pods",
+            "level":"2",
+            "children": [
+              {
+                "name": "Son of A",
+                "parent": "Level 2: A",
+                "level":"3"
+              },
+              {
+                "name": "Daughter of A",
+                "parent": "Level 2: A",
+                  "level":"3",
+              }
+            ]
           },
           {
-            "name": "Daughter of A",
-            "parent": "Level 2: A"
+            "name": "Level 2: B",
+            "parent": "All Pods",
+            "level":"2"
           }
         ]
-      },
-      {
-        "name": "Level 2: B",
-        "parent": "Top Level"
-      }
-    ]
   }
 ]
 
@@ -47,10 +60,37 @@ var svg = d3.select("body").append("svg")
   .append("g")
  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-root = treeData[0]['children'][0];
+root = treeData[0];
   
 update(root);
 
+
+
+function svgPoints(level){
+
+    if(level == '1'){
+    return octogonPoints;
+    }
+    if (level == '2'){
+    return hexagonPoints;
+    }
+    if (level == '3'){
+    return trianglePoints;
+    }
+}
+
+function svgTransform(level){
+
+    if(level == '1'){
+    return octogonTransform;
+    }
+    if (level == '2'){
+    return hexagonTransform;
+    }
+    if (level == '3'){
+    return triangleTransform;
+    }
+}
 
 
 
@@ -72,9 +112,11 @@ function update(source) {
   var nodeEnter = node.enter().append("g")
    .attr("class", "node")
    .attr("transform", function(d) { 
-    return "translate(" + d.y + "," + d.x + ")"; });
+    return " translate(" + d.y + "," + d.x + ")"; });
 
-  nodeEnter.append("circle")
+  nodeEnter.append("polygon")
+   .attr('points', function(d){return svgPoints(d.level);})
+   .attr('transform',function(d){return svgTransform(d.level)})
    .attr("r", 10)
    .style("fill", "#fff");
 
